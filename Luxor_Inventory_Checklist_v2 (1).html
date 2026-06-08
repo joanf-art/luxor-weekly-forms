@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luxor Garage Door Service - Weekly Inventory Checklist v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Barlow:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #1A2B8C;
+  --red:  #CC1F1F;
+  --lt-blue: #D6DCF5;
+  --lt-gray: #F4F5F8;
+  --border: #c0c6e0;
+  --dot: #d0d5e8;
+  --white: #ffffff;
+  --text: #1a1a2e;
+  --muted: #6b7280;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: #e8eaf2;
+  min-height: 100vh;
+  padding: 20px;
+  color: var(--text);
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: var(--white);
+  box-shadow: 0 4px 24px rgba(26,43,140,0.13);
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 3px solid var(--red);
+  gap: 20px;
+}
+.logo-svg { width: 130px; flex-shrink: 0; }
+.header-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex: 1;
+  text-align: center;
+}
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  min-width: 200px;
+}
+.header-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.header-field label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.header-field input {
+  border: none;
+  border-bottom: 2px solid var(--blue);
+  font-size: 12px;
+  font-family: 'Barlow', sans-serif;
+  color: var(--text);
+  padding: 2px 4px;
+  background: transparent;
+  width: 130px;
+  text-align: right;
+}
+.header-field input:focus { outline: none; border-bottom-color: var(--red); }
+
+/* INFO ROW */
+.info-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 0;
+  background: var(--lt-blue);
+  border-bottom: 2px solid var(--border);
+  padding: 8px 20px;
+  gap: 16px;
+}
+.info-field { display: flex; align-items: center; gap: 6px; }
+.info-field label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.info-field input {
+  cursor: text;
+  pointer-events: auto;
+  border: none;
+  border-bottom: 2px solid var(--blue);
+  font-size: 12px;
+  font-family: 'Barlow', sans-serif;
+  color: var(--text);
+  padding: 2px 4px;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+}
+.info-field input:focus { outline: none; border-bottom-color: var(--red); }
+
+/* CHECKLIST GRID */
+.checklist-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+.checklist-col {
+  border-right: 2px solid var(--border);
+}
+.checklist-col:last-child { border-right: none; }
+
+/* Column headers — now: Material | − | # | + | OK */
+.col-header {
+  display: grid;
+  grid-template-columns: 1fr 24px 44px 24px 34px;
+  background: var(--blue);
+  padding: 7px 8px;
+  gap: 3px;
+  align-items: center;
+}
+.col-header span {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--white);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.col-header span.material-hdr { text-align: left; }
+.col-header span.ok-hdr { color: #FFD700; }
+
+/* Item row */
+.item-row {
+  display: grid;
+  grid-template-columns: 1fr 24px 44px 24px 34px;
+  padding: 3px 8px;
+  gap: 3px;
+  align-items: center;
+  border-bottom: 1px dotted var(--dot);
+}
+.item-row:nth-child(even) { background: #f7f9ff; }
+.item-row:nth-child(odd)  { background: var(--white); }
+
+.item-name {
+  font-size: 10.5px;
+  color: var(--text);
+  padding-right: 4px;
+  line-height: 1.2;
+}
+.item-name input { width:100%; border:none; border-bottom:1px solid #c0c6e0; background:transparent; font-size:10.5px; font-family:Barlow,sans-serif; color:var(--text); cursor:text; pointer-events:auto; }
+.item-name input:focus { outline:none; border-bottom-color:var(--blue); }
+
+/* STEPPER CONTROLS */
+.step-btn {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 3px;
+  background: var(--white);
+  color: var(--blue);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  transition: all 0.15s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+  font-family: 'Barlow', sans-serif;
+}
+.step-btn:hover { background: var(--lt-blue); border-color: var(--blue); }
+.step-btn.minus:hover { border-color: var(--red); color: var(--red); }
+
+.qty-input {
+  width: 40px;
+  height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 3px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Barlow', sans-serif;
+  color: var(--blue);
+  background: var(--white);
+  padding: 0;
+  -moz-appearance: textfield;
+}
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.qty-input:focus { outline: none; border-color: var(--blue); }
+.qty-input.has-value { background: var(--lt-blue); border-color: var(--blue); color: var(--blue); }
+
+/* OK CHECKMARK */
+.ok-btn {
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--border);
+  border-radius: 3px;
+  background: var(--white);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  transition: all 0.15s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.ok-btn:hover { border-color: #16a34a; background: #f0fdf4; }
+.ok-btn.ok-checked {
+  background: #16a34a;
+  border-color: #16a34a;
+}
+.ok-btn.ok-checked::after {
+  content: '✓';
+  color: var(--white);
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* STATEMENT */
+.statement-box {
+  margin: 16px 20px 0;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  background: var(--lt-gray);
+}
+.statement-box p {
+  font-size: 10.5px;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.5;
+}
+.statement-box strong { font-style: normal; color: var(--blue); }
+
+/* SIGNATURE SECTION */
+.sig-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 16px 20px;
+  border-top: 2px solid var(--border);
+  margin-top: 16px;
+}
+.sig-block { display: flex; flex-direction: column; gap: 10px; }
+.sig-field { display: flex; flex-direction: column; gap: 4px; }
+.sig-field label {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.sig-field input {
+  border: none;
+  border-bottom: 1.5px solid var(--border);
+  font-size: 12px;
+  font-family: 'Barlow', sans-serif;
+  color: var(--text);
+  padding: 4px 2px;
+  background: transparent;
+}
+.sig-field input:focus { outline: none; border-bottom-color: var(--blue); }
+
+/* E-SIGN */
+.esig-box {
+  border: 1.5px dashed var(--border);
+  border-radius: 4px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  padding: 6px 12px;
+}
+.esig-name {
+  font-family: 'Dancing Script', cursive;
+  font-size: 26px;
+  color: var(--blue);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.esig-name.show { opacity: 1; }
+.esig-placeholder { font-size: 11px; color: #bbb; font-style: italic; }
+
+.btn-sign {
+  padding: 9px 14px;
+  background: var(--blue);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-sign:hover:not(:disabled) { background: #0f1d6b; }
+.btn-sign:disabled { background: var(--blue); cursor: pointer; opacity: 0.7; }
+.btn-sign.signed { background: #16a34a; }
+.signed-badge { font-size: 10px; color: #16a34a; font-weight: 600; display: none; }
+.signed-badge.show { display: block; }
+
+/* GENERATE */
+.generate-row {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  background: var(--white);
+}
+.btn-generate {
+  padding: 12px 40px;
+  background: var(--red);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 3px 10px rgba(204,31,31,0.2);
+}
+.btn-generate:hover:not(:disabled) { background: #a81818; }
+.btn-generate:disabled { background: #9ca3af; cursor: not-allowed; box-shadow: none; }
+
+.footer {
+  text-align: center;
+  font-size: 10px;
+  color: var(--muted);
+  padding: 10px 20px;
+  border-top: 1px solid var(--border);
+  font-style: italic;
+}
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; max-width: 100%; }
+  .btn-sign, .btn-generate, .generate-row, .step-btn { display: none !important; }
+  .signed-badge { display: block !important; }
+  .qty-input { border: 1px solid #ccc; }
+  .header, .info-row { page-break-after: avoid; page-break-inside: avoid; }
+  .checklist-wrap { page-break-before: avoid; }
+  @page { size: landscape; margin: 1cm; }
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <svg class="logo-svg" viewBox="0 0 220 72" xmlns="http://www.w3.org/2000/svg">
+      <text x="2" y="48" font-family="Arial Black,sans-serif" font-size="50" font-weight="900" fill="#1A2B8C" stroke="#0d1a6e" stroke-width="1">LUXOR</text>
+      <rect x="0" y="53" width="220" height="4.5" fill="#CC1F1F"/>
+      <rect x="0" y="59" width="220" height="2" fill="#CC1F1F"/>
+      <text x="2" y="72" font-family="Arial,sans-serif" font-size="12.5" font-weight="700" fill="#1A2B8C" letter-spacing="2.5">GARAGE DOOR SERVICE</text>
+    </svg>
+    <div class="header-title">Weekly Inventory Checklist &mdash; v2</div>
+    <div class="header-right">
+      <div class="header-field">
+        <label>Week Ending:</label>
+        <input type="date" id="weekEnding">
+      </div>
+      <div class="header-field">
+        <label>Date of Audit:</label>
+        <input type="date" id="auditDate">
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO ROW -->
+  <div class="info-row">
+    <div class="info-field">
+      <label>Technician:</label>
+      <input type="text" id="techName2" placeholder="Technician name" oninput="onInvNameInput()">
+    </div>
+    <div class="info-field">
+      <label>Vehicle:</label>
+      <input type="text" id="vehicle" placeholder="Vehicle description">
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="checklist-wrap">
+    <div class="checklist-col" id="leftCol"></div>
+    <div class="checklist-col" id="rightCol"></div>
+  </div>
+
+  <!-- STATEMENT -->
+  <div class="statement-box">
+    <p><strong>Statement of Acknowledgment:</strong> I have physically audited the above inventory and certify that the quantities listed reflect the current contents of the vehicle. I am responsible for any discrepancies.</p>
+  </div>
+
+  <!-- SIGNATURES -->
+  <div class="sig-section">
+    <!-- Tech sig -->
+    <div class="sig-block">
+      <div class="sig-field">
+        <label>Technician Name (Print)</label>
+        <input type="text" id="techName" placeholder="Technician full name" oninput="onInvNameInput()">
+      </div>
+      <div class="sig-field">
+        <label>Technician Signature</label>
+        <div class="esig-box">
+          <span class="esig-placeholder" id="techSigPh">Sign after entering your name above</span>
+          <span class="esig-name" id="techSigName"></span>
+        </div>
+      </div>
+      <button class="btn-sign" id="btnTechSign" onclick="signTech()" disabled>✍ Tap to Sign</button>
+      <div class="signed-badge" id="techSignedBadge"></div>
+    </div>
+    <!-- Supervisor sig -->
+    <div class="sig-block">
+      <div class="sig-field">
+        <label>Supervisor Name (Print)</label>
+        <input type="text" id="supName" placeholder="Supervisor full name" oninput="onSupInput()">
+      </div>
+      <div class="sig-field">
+        <label>Supervisor Signature</label>
+        <div class="esig-box">
+          <span class="esig-placeholder" id="supSigPh">Sign after entering supervisor name</span>
+          <span class="esig-name" id="supSigName"></span>
+        </div>
+      </div>
+      <button class="btn-sign" id="btnSupSign" onclick="signSup()" disabled>✍ Supervisor Sign</button>
+      <div class="signed-badge" id="supSignedBadge"></div>
+      <div class="sig-field" style="margin-top:4px;">
+        <label>Date of Supervisor Review</label>
+        <input type="date" id="supReviewDate">
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATE -->
+  <div class="generate-row">
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn-generate" id="btnGenerate" onclick="generateForm()">🖨 Generate Printable Form</button>
+      <button class="btn-generate" id="btnExcel" onclick="downloadExcel()" style="background:#1A2B8C;">📊 Download Excel</button>
+    </div>
+  </div>
+
+  <div class="footer">Luxor Garage Door Service &nbsp;|&nbsp; by: J. Feliciano &nbsp;|&nbsp; v2</div>
+</div>
+
+<script>
+const LEFT_ITEMS = [
+  '192 Red','192 Black','207 Red','207 Black','218 Red','218 Black',
+  '234 Red','234 Black','250 Short Red','250 Short Black','250 Long Red','250 Long Black',
+  '262 Red','262 Black','273 Red','273 Black','P 728 Spring',
+  'Extension Spring Hook (Single)','Extension Spring Hook (Double)',
+  '1" Steel Bearing','1" Nylon Bushing',
+  'White Rollers (10 Pack)','White Roller (Single Roller)',
+  'Blue Rollers (10 Pack)','Blue Roller (Single Roller)',
+  'Blue Rollers 7" Stem (10 Pack)','Blue Rollers 7" Stem (Single Roller)',
+  'Red Rollers (10 Pack)','Red Roller (Single Roller)',
+  'Red Rollers 7" Stem (10 Pack)','Red Rollers 7" Stem (Single Roller)',
+  "7' Cables","8' Cables","10' Cables","12' Cables","Drums 12'",
+  'Center Spring Support Bracket','End Bearing Plates','Bottom Brackets',
+  'Emergency Key Disconnect','O.R.B','Slide Lock','Can of Lube'
+];
+
+const RIGHT_ITEMS = [
+  'Top Bracket','#1 Hinge','#2 Hinge','#3 Hinge','#4 Hinge',
+  'Chamberlain Chain Drive Operator (Head)','Chamberlain Belt Drive Operator (Head)',
+  'Chamberlain Jackshaft','LiftMaster Chain Drive Operator (Head)',
+  'LiftMaster Belt Drive Operator (Head)','LiftMaster Jackshaft','Battery Backup',
+  'Chamberlain Chain Rail','Chamberlain Belt Rail',
+  "LiftMaster 7' Chain Rail G1707","LiftMaster 7' Belt Rail G2777",
+  "LiftMaster 8' Belt Rail G2778",'MyQ Camera','LiftMaster Sensors','Genie Sensors',
+  'Marantec Sensors','Guardian Sensors','LiftMaster Remote','LiftMaster Keypad',
+  'Guardian Remote','Guardian Keypad','Genie Trolley','Surge Protector',
+  'Extension Cord','Punch Hole Angle',"16' Strut","16' Torsion Tube",
+  "16' Weather Seal (T-Channel)","18' Weather Seal (T-Channel)",
+  "16' Retainer","16' Astragal Weather Seal"
+];
+
+let techSigned = false, supSigned = false;
+
+function buildCol(colId, items) {
+  const col = document.getElementById(colId);
+
+  // Header
+  const hdr = document.createElement('div');
+  hdr.className = 'col-header';
+  hdr.innerHTML = `
+    <span class="material-hdr">Material</span>
+    <span>−</span>
+    <span>Qty</span>
+    <span>+</span>
+    <span class="ok-hdr">OK ✓</span>
+  `;
+  col.appendChild(hdr);
+
+  items.forEach((name, idx) => {
+    const uid = colId + idx;
+    col.appendChild(makeItemRow(uid, name, false));
+  });
+
+  // Blank rows for right column
+  if (colId === 'rightCol') {
+    for (let b = 0; b < 7; b++) {
+      const buid = colId + 'blank' + b;
+      col.appendChild(makeItemRow(buid, '', true));
+    }
+  }
+}
+
+function makeItemRow(uid, name, isBlank) {
+  const row = document.createElement('div');
+  row.className = 'item-row';
+
+  const nameCell = isBlank
+    ? `<div class="item-name"><input type="text" placeholder="Add item..." style="font-size:10.5px;border:none;background:transparent;width:100%;font-family:Barlow,sans-serif;color:#1a2040;border-bottom:1px solid #c0c6e0;"></div>`
+    : `<div class="item-name">${name}</div>`;
+
+  row.innerHTML = `
+    ${nameCell}
+    <button class="step-btn minus" onclick="stepQty('${uid}',-1)" title="Decrease">−</button>
+    <input class="qty-input" type="number" id="qty-${uid}" value="0" min="0" oninput="onQtyInput('${uid}')">
+    <button class="step-btn plus" onclick="stepQty('${uid}',1)" title="Increase">+</button>
+    <div class="ok-btn" id="ok-${uid}" onclick="toggleOk('${uid}')" title="Mark OK"></div>
+  `;
+  return row;
+}
+
+function stepQty(uid, delta) {
+  const input = document.getElementById('qty-' + uid);
+  let val = parseInt(input.value) || 0;
+  val = Math.max(0, val + delta);
+  input.value = val;
+  onQtyInput(uid);
+}
+
+function onQtyInput(uid) {
+  const input = document.getElementById('qty-' + uid);
+  const val = parseInt(input.value) || 0;
+  input.classList.toggle('has-value', val > 0);
+  // Reset OK if quantity changes
+  const ok = document.getElementById('ok-' + uid);
+  if (ok) ok.classList.remove('ok-checked');
+}
+
+function toggleOk(uid) {
+  const ok = document.getElementById('ok-' + uid);
+  ok.classList.toggle('ok-checked');
+}
+
+function onInvNameInput() {
+  const name = document.getElementById('techName').value.trim();
+  const sigName = document.getElementById('techSigName');
+  const sigPh   = document.getElementById('techSigPh');
+  const btn     = document.getElementById('btnTechSign');
+  if (name) {
+    sigName.textContent = name;
+    sigName.classList.add('show');
+    sigPh.style.display = 'none';
+    btn.disabled = false;
+  } else {
+    sigName.classList.remove('show');
+    sigPh.style.display = '';
+    btn.disabled = true;
+  }
+  techSigned = false;
+  btn.classList.remove('signed');
+  btn.textContent = '✍ Tap to Sign';
+  document.getElementById('techSignedBadge').classList.remove('show');
+}
+
+function onSupInput() {
+  const name = document.getElementById('supName').value.trim();
+  const sigName = document.getElementById('supSigName');
+  const sigPh   = document.getElementById('supSigPh');
+  const btn     = document.getElementById('btnSupSign');
+  if (name) {
+    sigName.textContent = name;
+    sigName.classList.add('show');
+    sigPh.style.display = 'none';
+    btn.disabled = false;
+  } else {
+    sigName.classList.remove('show');
+    sigPh.style.display = '';
+    btn.disabled = true;
+  }
+  supSigned = false;
+  btn.classList.remove('signed');
+  btn.textContent = '✍ Supervisor Sign';
+  document.getElementById('supSignedBadge').classList.remove('show');
+}
+
+function signTech() {
+  const name = document.getElementById('techName').value.trim();
+  if (!name) { alert('Please enter your technician name first.'); return; }
+  techSigned = true;
+  const btn = document.getElementById('btnTechSign');
+  btn.classList.add('signed');
+  btn.textContent = '✅ Signed';
+  const now = new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const badge = document.getElementById('techSignedBadge');
+  badge.textContent = '✅ Signed: ' + now;
+  badge.classList.add('show');
+}
+
+function signSup() {
+  const name = document.getElementById('supName').value.trim();
+  if (!name) { alert('Please enter supervisor name first.'); return; }
+  supSigned = true;
+  const btn = document.getElementById('btnSupSign');
+  btn.classList.add('signed');
+  btn.textContent = '✅ Signed';
+  const now = new Date().toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const badge = document.getElementById('supSignedBadge');
+  badge.textContent = '✅ Signed: ' + now;
+  badge.classList.add('show');
+}
+
+function downloadExcel() {
+  if (typeof XLSX === 'undefined') { alert('Excel library not loaded.'); return; }
+  const wb = XLSX.utils.book_new();
+  const tech = document.getElementById('techName')?.value || '';
+  const vehicle = document.getElementById('vehicle')?.value || '';
+  const weekEnd = document.getElementById('weekEnding')?.value || '';
+  const rows = [
+    ['LUXOR GARAGE DOOR — WEEKLY INVENTORY CHECKLIST v2'],
+    ['Technician:', tech, 'Vehicle:', vehicle, 'Week Ending:', weekEnd],
+    [],
+    ['Material', 'Quantity', 'OK']
+  ];
+  ['leftCol', 'rightCol'].forEach(colId => {
+    if (colId === 'rightCol') rows.push([], ['--- RIGHT COLUMN ---']);
+    document.querySelectorAll('#' + colId + ' .item-row').forEach(row => {
+      const nameEl = row.querySelector('.item-name');
+      const nameInput = nameEl ? nameEl.querySelector('input') : null;
+      const name = nameInput ? nameInput.value : (nameEl ? nameEl.textContent.trim() : '');
+      if (!name.trim()) return;
+      const qtyEl = row.querySelector('.qty-input');
+      const qty = qtyEl ? (parseInt(qtyEl.value) || 0) : 0;
+      const okEl = row.querySelector('.ok-btn');
+      const ok = okEl && okEl.classList.contains('ok-checked') ? '✓' : '';
+      rows.push([name, qty, ok]);
+    });
+  });
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 45 }, { wch: 10 }, { wch: 6 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Inventory');
+  XLSX.writeFile(wb, 'Luxor_Inventory_v2_' + (tech.replace(/ /g, '_') || 'Tech') + '_' + weekEnd + '.xlsx');
+}
+
+function generateForm() {
+  window.print();
+}
+
+// Init
+buildCol('leftCol', LEFT_ITEMS);
+buildCol('rightCol', RIGHT_ITEMS);
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('weekEnding').value = today;
+document.getElementById('auditDate').value  = today;
+document.getElementById('supReviewDate').value = today;
+</script>
+</body>
+</html>
